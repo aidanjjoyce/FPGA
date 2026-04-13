@@ -11,29 +11,28 @@ Reference: `plan.md` has full architecture details, code samples, and diagrams f
 ## Phase 0 — Learn Verilog
 
 **Learn concepts** (read / experiment as you go)
-- [ ] Modules, port lists, `input` / `output` / `wire` / `reg`
-- [ ] Continuous assignment (`assign`) and bitwidths
-- [ ] `always @(posedge clk)` and `always @(*)` blocks
-- [ ] `if/else` and `case/endcase` inside always blocks
-- [ ] Non-blocking `<=` vs blocking `=`
-- [ ] Module instantiation
-- [ ] Operators: bitwise, arithmetic, comparison, shift, ternary
+- [x] Modules, port lists, `input` / `output` / `wire` / `reg`
+- [x] Continuous assignment (`assign`) and bitwidths
+- [x] `always @(posedge clk)` and `always @(*)` blocks
+- [x] `if/else` and `case/endcase` inside always blocks
+- [x] Non-blocking `<=` vs blocking `=`
+- [x] Module instantiation
+- [x] Operators: bitwise (`&`, `|`, `^`, `~`), arithmetic (`+`, `-`), ternary (`?:`)
+- [ ] Operators: comparison (`==`, `!=`, `<`, `>`), shift (`<<`, `>>`)
 
-**Install tools** (do this once you're ready to start writing Verilog)
-- [ ] Install Icarus Verilog (`brew install icarus-verilog` or `apt install iverilog`)
-- [ ] `pip install lark fastapi uvicorn`
-- [ ] `npm create vite@latest frontend`
+**Install tools**
+- [x] Install Icarus Verilog
 
 **Practice exercises** (write each by hand and verify with Icarus)
-- [ ] `and_gate.v` — 2-input AND via continuous assign
-- [ ] `mux2.v` — 2-to-1 mux via ternary operator
-- [ ] `half_adder.v` — sum and carry
-- [ ] `full_adder.v` — instantiate two half adders structurally
-- [ ] `dff.v` — D flip-flop with synchronous reset
-- [ ] `counter4.v` — 4-bit counter with clocked always block
-- [ ] `alu8.v` — 8-bit ALU: add, sub, AND, OR with 2-bit op select
+- [x] `and_gate.v` — 2-input AND via continuous assign
+- [x] `mux2.v` — 2-to-1 mux via ternary operator
+- [x] `half_adder.v` — sum and carry
+- [x] `full_adder.v` — instantiate two half adders structurally
+- [x] `dff.v` — D flip-flop with synchronous reset
+- [x] `counter4.v` — 4-bit counter with clocked always block
+- [x] `alu8.v` — 8-bit ALU: add, sub, AND, OR with 2-bit op select
 
-- [ ] **MILESTONE:** `alu8.v` produces correct output via Icarus testbench (12+7=19, 20-4=16)
+- [x] **MILESTONE:** `alu8.v` produces correct output via Icarus testbench (12+7=19, 20-4=16)
 
 ---
 
@@ -65,6 +64,9 @@ Reference: `plan.md` has full architecture details, code samples, and diagrams f
 ---
 
 ## Phase 2 — Verilog Parser
+
+**Install tools**
+- [ ] `pip install lark fastapi uvicorn`
 
 **Stage 2a — Combinational only**
 - [ ] Lark grammar: `module`/`endmodule`, `input`/`output`/`wire` declarations (1-bit)
@@ -98,6 +100,9 @@ Reference: `plan.md` has full architecture details, code samples, and diagrams f
 ---
 
 ## Phase 4 — React Frontend
+
+**Install tools**
+- [ ] `npm create vite@latest frontend`
 
 **Project setup**
 - [ ] Vite + React project scaffolded
