@@ -141,8 +141,10 @@ directly.
 **Signature:** `evaluate_lut(lut: LUT, wires: dict[str, int]) -> None`
 
 **Algorithm:**
-1. Read each wire ID in `lut.input_wires` from `wires` → produces an ordered list of 0/1 values
-2. Compute a binary index from those values, MSB-first (first wire = most significant bit)
+1. Read each wire ID in `lut.input_wires` from `wires`
+   → produces an ordered list of 0/1 values
+2. Compute a binary index from those values, MSB-first
+   (first wire = most significant bit)
 3. Look up `lut.truth_table[index]`
 4. Write the result to `wires[lut.output_wire]`
 
@@ -150,12 +152,70 @@ directly.
 ```
 index |= wire_values[i] << (N - 1 - i)
 ```
-For `input_wires = ["a", "b", "c"]` with values `a=1, b=0, c=1`: index = `0b101 = 5`. Matches the indexing convention defined on `LUT`.
+For `input_wires = ["a", "b", "c"]` with values `a=1, b=0, c=1`:
+index = `0b101 = 5`. Matches the indexing convention defined on `LUT`.
 
-**Mutation over return:** `wires` is mutated in place. Returning a new dict on every call would be wasteful in the convergence loop inside `simulate_step`.
+**Mutation over return:** `wires` is mutated in place.
+Returning a new dict on every call would be wasteful in the convergence loop
+inside `simulate_step`.
 
-**Scope — single LUT only:** Iteration over all LUTs lives in `simulate_step`. This keeps `evaluate_lut` small and directly unit-testable.
+**Scope — single LUT only:** Iteration over all LUTs lives in `simulate_step`.
+This keeps `evaluate_lut` small and directly unit-testable.
 
-**Error handling:** A missing wire ID raises `KeyError` naturally. This indicates a malformed netlist and should be caught by `Netlist` structural validation (see tasks.md), not here.
+**Error handling:** A missing wire ID raises `KeyError` naturally.
+This indicates a malformed netlist and should be caught by `Netlist`
+structural validation (see tasks.md), not here.
+
+---
+
+## `simulate_step()` and helpers (`fpga_sim/simulator.py`)
+
+**What it does:** Advances the circuit by one time step —
+settles combinational logic then latches sequential state.
+
+**Signature:**
+`simulate_step(netlist: Netlist, input_values: dict[str, int], rising_edge: bool) -> None`
+
+**Algorithm:**
+1. Write `input_values` into `netlist.wires`
+2. Call `_evaluate_luts_to_convergence(netlist)`
+3. If `rising_edge`: call `_latch_dffs(netlist)`
+
+**Why `rising_edge: bool` rather than passing clock values?**
+The caller owns the clock signal and is responsible for detecting the `0→1`
+transition. Passing a boolean keeps `simulate_step` free of clock-edge
+detection logic.
+
+---
+
+### `_evaluate_luts_to_convergence(netlist)`
+
+Repeatedly evaluates all LUTs until the wire state stabilises.
+
+**Algorithm:** Each iteration snapshots `netlist.wires`, evaluates every LUT
+via `evaluate_lut`, then compares the new state to the snapshot. Returns on
+the first pass with no changes. Raises `RuntimeError` if convergence is not
+reached within `MAX_ITERATIONS` (1000), indicating a combinational feedback
+loop in the netlist.
+
+**Why iterative relaxation over topological sort?**
+Simpler to implement and correct for any LUT ordering. Topological sort would
+require analysis at construction time; relaxation handles it naturally at
+simulation time.
+
+---
+
+### `_latch_dffs(netlist)`
+
+Latches all DFFs simultaneously on a rising clock edge.
+
+**Algorithm:** First pass collects all next-Q values into a temporary dict
+(reading `d_wire`, or 0 if `reset_wire` is high). Second pass writes them all
+to `netlist.wires`. The two-pass approach ensures simultaneity — if DFF A's
+`q_wire` feeds DFF B's `d_wire`, B captures A's pre-edge value, not A's new
+post-edge value.
+
+**Reset:** Synchronous active-high. If `wires[dff.reset_wire] == 1` at the
+clock edge, `q_wire` is set to 0 regardless of `d_wire`.
 
 ---

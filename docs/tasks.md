@@ -49,7 +49,7 @@ Reference: `plan.md` has full architecture details, code samples, and diagrams f
 
 **Simulator engine** (`fpga_sim/simulator.py`)
 - [x] Implement `evaluate_lut()` — index truth table from wire values
-- [ ] Implement `simulate_step()` — LUT evaluation to convergence, then DFF latch on rising edge
+- [x] Implement `simulate_step()` — LUT evaluation to convergence, then DFF latch on rising edge
 
 **Serialisation** (methods on `Netlist`)
 - [ ] Implement `schema()` — static topology (luts, dffs, inputs, outputs)
