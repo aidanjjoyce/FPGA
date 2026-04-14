@@ -118,6 +118,16 @@ endmodule
 
 ## Phase 1 — Build the netlist model (Week 1–2)
 
+> **Note:** Specific interface decisions for Phase 1 are recorded in `architecture.md`,
+> agreed through discussion before implementation. That file supersedes any conflicting
+> interface details in the code samples below.
+>
+> Key differences from the samples below: `LUT` has no `num_inputs` field and adds
+> `output_wire`; `DFF.reset_wire` is required (not optional); `Netlist.luts`/`dffs` are
+> lists not dicts; `evaluate_lut` mutates `wires` in place and returns `None`;
+> `simulate_step` takes `rising_edge: bool` not `clk: int`; `snapshot()` returns only
+> `{"wires": ...}` with no separate `lut_outputs`/`dff_outputs` keys.
+
 Build the data structures and simulation engine first, before any parsing. This is the core of
 the project; the parser and web app are layers on top of it.
 

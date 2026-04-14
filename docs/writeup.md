@@ -31,7 +31,32 @@ Seven synthesisable RTL modules written by hand in Verilog, verified with a cust
 
 ## Phase 1 — Netlist Model + Simulator
 
-*Coming soon.*
+### What was built
+
+Three data structures and a simulation engine in `fpga_sim/`:
+
+| Component | Description |
+|---|---|
+| `LUT` | Look-up table primitive — stores a truth table and the wire IDs it reads and drives |
+| `DFF` | D flip-flop primitive — stores wire IDs for D, Q, clock, and synchronous reset |
+| `Netlist` | Complete circuit — holds all LUTs, DFFs, and a dict of current wire values |
+| `evaluate_lut()` | Evaluates one LUT against current wire state; writes result back to wires |
+| `simulate_step()` | Advances the circuit one time step: settles combinational logic to convergence, then latches DFFs on a rising clock edge |
+
+`Netlist` also exposes `schema()` (static topology for the frontend) and `snapshot()` (current wire values after each computation).
+
+### Skills
+- **Python dataclasses** — modelling hardware primitives as typed data structures with validation in `__post_init__`
+- **Simulation fundamentals** — iterative relaxation for combinational settling; two-phase clocked simulation (combinational first, sequential latch second)
+- **Digital logic** — translating hardware concepts (LUT truth tables, DFF synchronous reset, simultaneous register latching) into a software model that faithfully reproduces their behaviour
+- **Software design** — separating concerns between data (netlist), computation (simulator), and serialisation; keeping primitives free of transport logic
+
+### Design decisions
+
+- **MSB-first truth table indexing** — the first wire in `input_wires` is the most significant bit of the index into `truth_table`, matching standard hardware convention.
+- **Iterative relaxation for convergence** — LUTs are evaluated repeatedly until the wire state stabilises, rather than pre-sorting into topological order. Simpler to implement and correct for any ordering.
+- **Simultaneous DFF latching** — all DFF next-Q values are collected before any are written, ensuring correct behaviour when DFFs are chained.
+- **`rising_edge: bool`** — the caller detects clock transitions and passes a boolean, keeping the simulator free of clock-edge detection logic.
 
 ---
 

@@ -38,18 +38,22 @@ Reference: `plan.md` has full architecture details, code samples, and diagrams f
 
 ## Phase 1 — Netlist Model + Simulator
 
+> Architecture decisions for this phase are discussed and recorded in `architecture.md`
+> before implementation. That file is the authoritative interface reference.
+
 **Data structures** (`fpga_sim/netlist.py`)
-- [ ] Implement `LUT` dataclass (id, num_inputs, truth_table, input_wires)
-- [ ] Implement `DFF` dataclass (id, d_wire, q_wire, clk_wire, reset_wire, reset_val)
-- [ ] Implement `Netlist` dataclass (luts, dffs, wires, inputs, outputs)
+- [x] Implement `LUT` dataclass (id, truth_table, input_wires, output_wire)
+- [x] Implement `DFF` dataclass (id, d_wire, q_wire, clk_wire, reset_wire)
+- [x] Implement `Netlist` dataclass (luts, dffs, wires, inputs, outputs)
+- [ ] Add `Netlist.__post_init__` validation: no two components may drive the same wire
 
 **Simulator engine** (`fpga_sim/simulator.py`)
-- [ ] Implement `evaluate_lut()` — index truth table from wire values
-- [ ] Implement `simulate_step()` — LUT evaluation to convergence, then DFF latch on rising edge
+- [x] Implement `evaluate_lut()` — index truth table from wire values
+- [x] Implement `simulate_step()` — LUT evaluation to convergence, then DFF latch on rising edge
 
 **Serialisation** (methods on `Netlist`)
-- [ ] Implement `schema()` — static topology (luts, dffs, inputs, outputs)
-- [ ] Implement `snapshot()` — dynamic wire state (wires, lut_outputs, dff_outputs)
+- [x] Implement `schema()` — static topology (luts, dffs, inputs, outputs)
+- [x] Implement `snapshot()` — dynamic wire state (wires only; lut/dff outputs readable directly from wires by wire ID)
 
 - [ ] **MILESTONE:** Hardcoded 2-bit counter (4 LUTs + 2 DFFs) clocked 8 times prints 00→01→10→11→00
 
