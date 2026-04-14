@@ -118,6 +118,10 @@ endmodule
 
 ## Phase 1 — Build the netlist model (Week 1–2)
 
+> **Note:** Specific interface decisions for Phase 1 are recorded in `architecture.md`,
+> agreed through discussion before implementation. That file supersedes any conflicting
+> interface details in the code samples below.
+
 Build the data structures and simulation engine first, before any parsing. This is the core of
 the project; the parser and web app are layers on top of it.
 

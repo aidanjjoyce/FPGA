@@ -38,6 +38,9 @@ Reference: `plan.md` has full architecture details, code samples, and diagrams f
 
 ## Phase 1 — Netlist Model + Simulator
 
+> Architecture decisions for this phase are discussed and recorded in `architecture.md`
+> before implementation. That file is the authoritative interface reference.
+
 **Data structures** (`fpga_sim/netlist.py`)
 - [ ] Implement `LUT` dataclass (id, num_inputs, truth_table, input_wires)
 - [ ] Implement `DFF` dataclass (id, d_wire, q_wire, clk_wire, reset_wire, reset_val)
