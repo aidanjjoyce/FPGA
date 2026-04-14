@@ -53,7 +53,7 @@ Reference: `plan.md` has full architecture details, code samples, and diagrams f
 
 **Serialisation** (methods on `Netlist`)
 - [x] Implement `schema()` — static topology (luts, dffs, inputs, outputs)
-- [x] Implement `snapshot()` — dynamic wire state (wires, lut_outputs, dff_outputs)
+- [x] Implement `snapshot()` — dynamic wire state (wires only; lut/dff outputs readable directly from wires by wire ID)
 
 - [ ] **MILESTONE:** Hardcoded 2-bit counter (4 LUTs + 2 DFFs) clocked 8 times prints 00→01→10→11→00
 
