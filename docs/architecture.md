@@ -33,6 +33,10 @@ Storing it separately would require keeping the two in sync.
 first wire in `input_wires` is the MSB. For example, with `input_wires = ["a", "b", "c"]`
 and wire values `a=1, b=0, c=1`, the index is `0b101 = 5`, so the output is `truth_table[5]`.
 
+**Validation:** `__post_init__` enforces `len(truth_table) == 2 ** len(input_wires)` and raises
+`ValueError` if not. This mirrors the hardware constraint: N input wires require exactly 2^N
+SRAM cells in the MUX tree — no more, no less.
+
 **Connectivity model:** The LUT stores the wire IDs it is connected to (`input_wires`,
 `output_wire`). The `Netlist` holds the current wire values in a `dict[str, int]`. Evaluation
 reads from that dict using the LUT's stored IDs and writes the result back to `output_wire`.
