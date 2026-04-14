@@ -30,3 +30,4 @@ specify. If the user says "just implement it", that is an explicit override of t
 - Be concise — lists over sentences where possible
 - No filler or preamble
 - Don't summarise what you just did
+- Keep questions short and direct — e.g. "Do you want to write a spec or should I take over?"
