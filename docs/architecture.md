@@ -133,3 +133,29 @@ in the simulator and in tests — access `netlist.luts`, `netlist.dffs`, and `ne
 directly.
 
 ---
+
+## `evaluate_lut()` (`fpga_sim/simulator.py`)
+
+**What it does:** Evaluates a single LUT against the current wire state and writes the result back.
+
+**Signature:** `evaluate_lut(lut: LUT, wires: dict[str, int]) -> None`
+
+**Algorithm:**
+1. Read each wire ID in `lut.input_wires` from `wires` → produces an ordered list of 0/1 values
+2. Compute a binary index from those values, MSB-first (first wire = most significant bit)
+3. Look up `lut.truth_table[index]`
+4. Write the result to `wires[lut.output_wire]`
+
+**Index calculation:** MSB-first means wire `i` contributes bit `(N-1-i)`:
+```
+index |= wire_values[i] << (N - 1 - i)
+```
+For `input_wires = ["a", "b", "c"]` with values `a=1, b=0, c=1`: index = `0b101 = 5`. Matches the indexing convention defined on `LUT`.
+
+**Mutation over return:** `wires` is mutated in place. Returning a new dict on every call would be wasteful in the convergence loop inside `simulate_step`.
+
+**Scope — single LUT only:** Iteration over all LUTs lives in `simulate_step`. This keeps `evaluate_lut` small and directly unit-testable.
+
+**Error handling:** A missing wire ID raises `KeyError` naturally. This indicates a malformed netlist and should be caught by `Netlist` structural validation (see tasks.md), not here.
+
+---

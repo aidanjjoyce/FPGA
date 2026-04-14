@@ -45,9 +45,10 @@ Reference: `plan.md` has full architecture details, code samples, and diagrams f
 - [x] Implement `LUT` dataclass (id, truth_table, input_wires, output_wire)
 - [x] Implement `DFF` dataclass (id, d_wire, q_wire, clk_wire, reset_wire)
 - [x] Implement `Netlist` dataclass (luts, dffs, wires, inputs, outputs)
+- [ ] Add `Netlist.__post_init__` validation: no two components may drive the same wire
 
 **Simulator engine** (`fpga_sim/simulator.py`)
-- [ ] Implement `evaluate_lut()` — index truth table from wire values
+- [x] Implement `evaluate_lut()` — index truth table from wire values
 - [ ] Implement `simulate_step()` — LUT evaluation to convergence, then DFF latch on rising edge
 
 **Serialisation** (methods on `Netlist`)
