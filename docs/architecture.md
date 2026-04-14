@@ -43,3 +43,49 @@ reads from that dict using the LUT's stored IDs and writes the result back to `o
 This mirrors hardware: a physical LUT's pins are hardwired to specific nets at manufacture time.
 
 ---
+
+## `DFF` dataclass (`fpga_sim/netlist.py`)
+
+**What it represents:** A D flip-flop — the primitive sequential logic element in an FPGA.
+A DFF captures the value on its data input `D` at the moment of a rising clock edge and holds
+it on its output `Q` until the next rising edge. `Q` is continuously readable at all times;
+it only changes at the clock edge.
+
+In a real FPGA, DFFs are dedicated hardened registers built into each logic slice — they are
+not implemented from LUTs. This is why they are modelled as a separate primitive rather than
+as a LUT with a feedback wire.
+
+**Fields:**
+
+| Field | Type | Notes |
+|---|---|---|
+| `id` | `str` | Unique identifier within the netlist |
+| `d_wire` | `str` | Data input wire ID |
+| `q_wire` | `str` | Registered output wire ID |
+| `clk_wire` | `str` | Clock input wire ID |
+| `reset_wire` | `str` | Synchronous active-high reset wire ID |
+
+**Behaviour:** On a rising clock edge (`clk 0→1`):
+- If `reset = 1`: `Q ← 0`
+- If `reset = 0`: `Q ← D`
+- At all other times: `Q` unchanged
+
+**Why synchronous reset?** Our `dff.v` uses `always @(posedge clk)` with `if (rst)` inside —
+the reset is checked only at the clock edge, not continuously. This is the simpler model and
+matches the Verilog we are simulating.
+
+**Why `reset_wire` is required:** In real hardware many DFFs omit reset to save routing
+resources. In our simulator, if a DFF needs no reset, wire `reset_wire` to a net held
+permanently at `0`. This keeps the dataclass uniform — every DFF has the same fields.
+
+**Why `clk_wire` is stored:** The simulator's `simulate_step(netlist, clk)` takes clock as
+an external parameter rather than reading it from the wires dict — we cannot simulate
+continuous time, so clock transitions are explicit events. However, `clk_wire` is stored for
+topology accuracy: `schema()` can report which net each DFF's clock pin connects to, which
+the frontend visualiser will use to draw clock connections.
+
+**Connectivity model:** Identical to LUT — the DFF stores wire IDs; the `Netlist` holds
+current wire values in `dict[str, int]`. The simulator reads `d_wire` and `reset_wire` from
+that dict and writes back to `q_wire` on a rising edge.
+
+---

@@ -1,4 +1,4 @@
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 
 
 @dataclass
@@ -15,3 +15,12 @@ class LUT:
                 f"LUT '{self.id}': truth_table has {len(self.truth_table)} entries, "
                 f"expected {expected_size} (2 ** {len(self.input_wires)} inputs)"
             )
+
+
+@dataclass
+class DFF:
+    id: str
+    d_wire: str
+    q_wire: str
+    clk_wire: str
+    reset_wire: str
