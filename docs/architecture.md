@@ -89,3 +89,47 @@ current wire values in `dict[str, int]`. The simulator reads `d_wire` and `reset
 that dict and writes back to `q_wire` on a rising edge.
 
 ---
+
+## `Netlist` dataclass (`fpga_sim/netlist.py`)
+
+**What it represents:** The complete circuit — all components and the current value of every
+signal. It is the single object the simulator operates on and the backend serialises.
+
+**Fields:**
+
+| Field | Type | Notes |
+|---|---|---|
+| `luts` | `list[LUT]` | All LUTs in the circuit |
+| `dffs` | `list[DFF]` | All DFFs in the circuit |
+| `wires` | `dict[str, int]` | Current value (0 or 1) of every named signal |
+| `inputs` | `list[str]` | Wire IDs that are primary inputs (driven from outside) |
+| `outputs` | `list[str]` | Wire IDs that are primary outputs (read from outside) |
+
+**Why `list` for components but `dict` for wires?** The simulator always iterates all LUTs
+and DFFs in full — it never needs to find one by ID during simulation. A list is sufficient
+and avoids duplicating the ID that is already stored on each object. Wire values are accessed
+by name on every LUT input evaluation and every DFF latch, so keyed O(1) lookup justifies a
+dict.
+
+**Connectivity model:** Wires are named signals with a current value — not explicit edges
+between components. Topology is encoded in the components themselves (`input_wires`,
+`output_wire` on LUT; `d_wire`, `q_wire` etc. on DFF). To find what drives a wire, inspect
+the component that names it as its output.
+
+**`schema()` — static topology:** Returns the fixed structure of the circuit, called once
+by the frontend on page load. Includes all LUT/DFF fields needed for visualisation.
+
+**`snapshot()` — dynamic state:** Returns `{"wires": dict}` — the current value of every
+signal. The frontend can read any component's output directly from `wires` using the wire ID
+stored on the component, so separate `lut_outputs`/`dff_outputs` keys are redundant.
+
+**Why serialisation methods live on `Netlist`, not on `LUT`/`DFF`:** `LUT` and `DFF` are
+pure data structures with no knowledge of JSON or HTTP. Serialisation is a transport concern.
+`Netlist` exposes `_lut_to_dict()` and `_dff_to_dict()` as private helpers, keeping the
+conversion logic close to where it is used without polluting the primitives.
+
+**When to use these methods:** Only at the HTTP boundary (Phase 3 backend). Inside Python —
+in the simulator and in tests — access `netlist.luts`, `netlist.dffs`, and `netlist.wires`
+directly.
+
+---

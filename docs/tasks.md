@@ -43,8 +43,8 @@ Reference: `plan.md` has full architecture details, code samples, and diagrams f
 
 **Data structures** (`fpga_sim/netlist.py`)
 - [x] Implement `LUT` dataclass (id, truth_table, input_wires, output_wire)
-- [ ] Implement `DFF` dataclass (id, d_wire, q_wire, clk_wire, reset_wire, reset_val)
-- [ ] Implement `Netlist` dataclass (luts, dffs, wires, inputs, outputs)
+- [x] Implement `DFF` dataclass (id, d_wire, q_wire, clk_wire, reset_wire)
+- [x] Implement `Netlist` dataclass (luts, dffs, wires, inputs, outputs)
 
 **Simulator engine** (`fpga_sim/simulator.py`)
 - [ ] Implement `evaluate_lut()` — index truth table from wire values
