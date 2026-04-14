@@ -55,7 +55,7 @@ Reference: `plan.md` has full architecture details, code samples, and diagrams f
 - [x] Implement `schema()` — static topology (luts, dffs, inputs, outputs)
 - [x] Implement `snapshot()` — dynamic wire state (wires only; lut/dff outputs readable directly from wires by wire ID)
 
-- [ ] **MILESTONE:** Hardcoded 2-bit counter (4 LUTs + 2 DFFs) clocked 8 times prints 00→01→10→11→00
+- [x] **MILESTONE:** Hardcoded 2-bit counter (2 LUTs + 2 DFFs) clocked 8 times prints 00→01→10→11→00
 
 **Unit tests** (`tests/` with pytest — build netlists directly in Python, no parsing)
 - [ ] `test_lut.py` — `evaluate_lut` for AND, OR, XOR, NOT truth tables; correct index calculation

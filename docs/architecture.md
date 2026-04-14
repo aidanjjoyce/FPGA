@@ -225,3 +225,22 @@ post-edge value.
 clock edge, `q_wire` is set to 0 regardless of `d_wire`.
 
 ---
+
+## Project setup
+
+**Package install:** `fpga_sim` is installed as an editable package via `pyproject.toml`
+(`pip install -e .`). This makes `from fpga_sim.netlist import ...` work from any script,
+test, or REPL without path manipulation.
+
+**Examples convention:** Hand-built netlists used as integration proofs live in `examples/`.
+Each example pairs a reference Verilog file with a Python script containing:
+- A `build_<name>() -> Netlist` factory function — reusable in tests
+- A `__main__` block that runs the simulation and prints wire state each tick
+
+The `build_*` functions are the manual equivalent of what the Phase 2 parser will do
+automatically — building them by hand once is a useful exercise in understanding the mapping.
+
+**No-reset wires:** DFFs that need no reset connect `reset_wire` to a wire named `gnd`
+initialised to `0` in the `wires` dict. This keeps the `DFF` dataclass uniform.
+
+---
