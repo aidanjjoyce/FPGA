@@ -132,6 +132,12 @@ conversion logic close to where it is used without polluting the primitives.
 in the simulator and in tests — access `netlist.luts`, `netlist.dffs`, and `netlist.wires`
 directly.
 
+**`__post_init__` validation — single-driver rule:** On construction, `Netlist` checks that
+no wire is driven by more than one source. Drivers are: each LUT's `output_wire`, each DFF's
+`q_wire`, and every entry in `inputs`. If a wire ID appears more than once across these,
+`ValueError` is raised naming the conflicting wire. Input wires on LUTs/DFFs are readers,
+not drivers, and are not checked here.
+
 ---
 
 ## `evaluate_lut()` (`fpga_sim/simulator.py`)

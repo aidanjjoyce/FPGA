@@ -34,6 +34,16 @@ class Netlist:
     inputs: list[str]     = field(default_factory=list)
     outputs: list[str]    = field(default_factory=list)
 
+    def __post_init__(self):
+        drivers = [lut.output_wire for lut in self.luts] + \
+                  [dff.q_wire for dff in self.dffs] + \
+                  self.inputs
+        seen = set()
+        for wire in drivers:
+            if wire in seen:
+                raise ValueError(f"Wire '{wire}' is driven by more than one source")
+            seen.add(wire)
+
     def _lut_to_dict(self, l: LUT) -> dict:
         return {
             "id": l.id,
