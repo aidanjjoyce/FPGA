@@ -42,7 +42,7 @@ Reference: `plan.md` has full architecture details, code samples, and diagrams f
 > before implementation. That file is the authoritative interface reference.
 
 **Data structures** (`fpga_sim/netlist.py`)
-- [ ] Implement `LUT` dataclass (id, num_inputs, truth_table, input_wires)
+- [x] Implement `LUT` dataclass (id, truth_table, input_wires, output_wire)
 - [ ] Implement `DFF` dataclass (id, d_wire, q_wire, clk_wire, reset_wire, reset_val)
 - [ ] Implement `Netlist` dataclass (luts, dffs, wires, inputs, outputs)
 
